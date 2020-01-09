@@ -1,12 +1,7 @@
 package com.opencredo.examples.akkajava.egzaminas;
 
 import akka.actor.*;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import com.opencredo.examples.akkajava.Order;
-
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import com.opencredo.examples.akkajava.streamers.Stream;
 
 import static akka.japi.pf.ReceiveBuilder.match;
 
@@ -25,7 +20,11 @@ public class WorkerActor extends AbstractLoggingActor {
 
         resultsActor =  context().actorSelection("/user/ResultsActor");
 
-        receive(match(Order.class, order -> {
+        receive(match(Stream.class, streamer-> {
+
+            Thread.sleep(2000);
+            log().info("Received a streamer: " + streamer.user_name.toString());
+            resultsActor.tell(streamer.user_name , self());
         }).matchAny(message -> {
             log().info(message.toString());
             //context().actorSelection("/user/ResultsActor").tell("Hello results actor", self());

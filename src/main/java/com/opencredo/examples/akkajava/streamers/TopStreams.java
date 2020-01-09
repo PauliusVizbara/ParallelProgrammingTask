@@ -2,9 +2,9 @@ package com.opencredo.examples.akkajava.streamers;
 
 public class TopStreams {
 
-    public Streamer[] data;
+    public Stream[] data;
 
-    public TopStreams(Streamer[] data) {
+    public TopStreams(Stream[] data) {
         this.data = data;
     }
 }
