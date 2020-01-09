@@ -1,5 +1,5 @@
-# P170B328 Lygiagretusis programavimas
-# Individuali užduotis sesijos metuFailas
+# P170B328 Lygiagretusis programavimas. Individuali užduotis sesijos metu
+
  
 
 
