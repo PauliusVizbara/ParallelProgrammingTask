@@ -3,33 +3,36 @@ package com.opencredo.examples.akkajava.egzaminas;
 import akka.actor.*;
 import com.opencredo.examples.akkajava.streamers.Stream;
 
+import java.util.Random;
+
 import static akka.japi.pf.ReceiveBuilder.match;
 
 public class WorkerActor extends AbstractLoggingActor {
 
 
     ActorSelection resultsActor;
+    Random random;
 
     public static Props props() {
         return Props.create(WorkerActor.class, () -> new WorkerActor());
     }
 
-    private WorkerActor(){
+    private WorkerActor() {
+        random = new Random();
+        int minSleepValue = 1000;
+        int maxSleepValue = 5000;
 
+        int minStreamGrowth = 0;
+        resultsActor = context().actorSelection("/user/ResultsActor");
 
-
-        resultsActor =  context().actorSelection("/user/ResultsActor");
-
-        receive(match(Stream.class, streamer-> {
-
-            Thread.sleep(2000);
-            log().info("Received a streamer: " + streamer.user_name.toString());
-            resultsActor.tell(streamer.user_name , self());
+        receive(match(Stream.class, streamer -> {
+            Stream.calculateStreamGrowth(streamer);
+            Thread.sleep(random.nextInt((maxSleepValue - minSleepValue) + 1) + minSleepValue);
+            if (streamer.streamGrowth >= minStreamGrowth) resultsActor.tell(streamer, self());
+            resultsActor.tell(MainActor.PROCESSED_STREAM_MESSAGE, self());
         }).matchAny(message -> {
             log().info(message.toString());
-            //context().actorSelection("/user/ResultsActor").tell("Hello results actor", self());
-            resultsActor.tell(message.toString() + " + 1", self());
-    }).build());
+        }).build());
 
 
     }
