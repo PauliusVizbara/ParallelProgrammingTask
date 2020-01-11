@@ -10,7 +10,7 @@ import static akka.japi.pf.ReceiveBuilder.match;
 public class WorkerActor extends AbstractLoggingActor {
 
 
-    ActorSelection resultsActor;
+    ActorRef resultsActor;
     Random random;
 
     public static Props props() {
@@ -22,13 +22,15 @@ public class WorkerActor extends AbstractLoggingActor {
         int minSleepValue = 1000;
         int maxSleepValue = 5000;
 
-        int minStreamGrowth = 0;
-        resultsActor = context().actorSelection("/user/ResultsActor");
+        int minStreamGrowth = 5000;
 
         receive(match(Stream.class, streamer -> {
+            resultsActor = context().sender();
             Stream.calculateStreamGrowth(streamer);
             Thread.sleep(random.nextInt((maxSleepValue - minSleepValue) + 1) + minSleepValue);
-            if (streamer.streamGrowth >= minStreamGrowth) resultsActor.tell(streamer, self());
+            if (streamer.streamGrowth >= minStreamGrowth) {
+                resultsActor.tell(streamer, self());
+            }
             resultsActor.tell(MainActor.PROCESSED_STREAM_MESSAGE, self());
         }).matchAny(message -> {
             log().info(message.toString());

@@ -13,17 +13,16 @@ public class Main {
 
 
         int streamAmount = 30;
-        int workerCount = streamAmount / 3 ;
 
         final Config config = ConfigFactory.load();
-        final ActorSystem system = ActorSystem.create("EgzaminoSistema", config);
+        final ActorSystem system = ActorSystem.create("ExamSystem", config);
 
-        ActorRef mainActor = system.actorOf(WorkerActor.props().withRouter(new RoundRobinPool(workerCount)));
-        ActorRef resultsActor = system.actorOf(ResultsActor.props(system, streamAmount), "ResultsActor");
+        ActorRef mainActor = system.actorOf(MainActor.props(system, streamAmount), "MainActor");
+
 
         Stream[] topStreams = API.getTopStreams(streamAmount);
         for (Stream stream : topStreams){
-            mainActor.tell(stream,resultsActor);
+            mainActor.tell(stream,ActorRef.noSender());
         }
 
 

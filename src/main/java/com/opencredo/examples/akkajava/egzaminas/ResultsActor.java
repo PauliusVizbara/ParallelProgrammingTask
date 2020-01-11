@@ -13,17 +13,15 @@ import static akka.japi.pf.ReceiveBuilder.match;
 
 public class ResultsActor extends AbstractLoggingActor {
 
-    ActorSystem system;
     int streamAmount;
     int processedStreams;
 
-    public static Props props(ActorSystem system, int streamAmount) {
-        return Props.create(ResultsActor.class, () -> new ResultsActor(system, streamAmount));
+    public static Props props(int streamAmount) {
+        return Props.create(ResultsActor.class, () -> new ResultsActor( streamAmount));
     }
 
-    private ResultsActor(ActorSystem system, int streamAmount) throws IOException {
+    private ResultsActor( int streamAmount) throws IOException {
 
-        this.system = system;
         this.streamAmount = streamAmount;
         this.processedStreams = 0;
 
@@ -44,7 +42,7 @@ public class ResultsActor extends AbstractLoggingActor {
                 if (++processedStreams == streamAmount) {
                     log().info("End of work");
                     writer.close();
-                    system.terminate();
+                    context().system().terminate();
                 }
             }
         }).matchAny(message -> {
