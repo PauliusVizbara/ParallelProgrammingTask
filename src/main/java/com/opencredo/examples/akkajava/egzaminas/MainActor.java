@@ -12,21 +12,28 @@ import java.io.IOException;
 
 import static akka.japi.pf.ReceiveBuilder.match;
 
+
+/**
+ * Pagrindinio aktoriaus klasė, sukurianti maršrutizavimą ir rezultatų aktorių.
+ *
+ */
 public class MainActor extends AbstractLoggingActor {
-    ActorSystem system;
+
     ActorRef workerRouter;
 
     public static String PROCESSED_STREAM_MESSAGE = "Processed stream";
 
-    public static Props props(ActorSystem system, int streamAmount) {
-        return Props.create(MainActor.class, () -> new MainActor(system, streamAmount));
+    public static Props props( int streamAmount) {
+        return Props.create(MainActor.class, () -> new MainActor(streamAmount));
     }
 
-    private MainActor(ActorSystem system, int streamAmount) throws IOException {
+    private MainActor( int streamAmount) throws IOException {
 
-        workerRouter = system.actorOf(WorkerActor.props().withRouter(new RoundRobinPool(streamAmount/3)));
+        // Sukuriamas RoundRobinPool maršrutizavimas siųsti žinutes darbininkų aktoriams
+        workerRouter = context().system().actorOf(WorkerActor.props().withRouter(new RoundRobinPool(streamAmount/3)));
 
-        ActorRef resultsActor = system.actorOf(ResultsActor.props(streamAmount),"ResultsActor");
+
+        ActorRef resultsActor = context().system().actorOf(ResultsActor.props(streamAmount),"ResultsActor");
 
 
         receive(match(Stream.class, stream -> {

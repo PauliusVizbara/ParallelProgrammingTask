@@ -7,6 +7,10 @@ import java.util.Random;
 
 import static akka.japi.pf.ReceiveBuilder.match;
 
+/**
+ * Darbininko aktorius, priemantis, apdorojantis, atrenkantis transliacijas bei persiunčia jas rezultatų aktoriui.
+ *
+ */
 public class WorkerActor extends AbstractLoggingActor {
 
 
@@ -25,12 +29,16 @@ public class WorkerActor extends AbstractLoggingActor {
         int minStreamGrowth = 5000;
 
         receive(match(Stream.class, streamer -> {
-            resultsActor = context().sender();
+            resultsActor = context().sender(); // Gaunamas rezultatų aktorius
             Stream.calculateStreamGrowth(streamer);
+            // Papildomas gijos užmigdymas (įsitikinimui, kad viskas gerai veikia)
             Thread.sleep(random.nextInt((maxSleepValue - minSleepValue) + 1) + minSleepValue);
+            // Jeigu transliacija atitinka atrinkimo funkciją
             if (streamer.streamGrowth >= minStreamGrowth) {
                 resultsActor.tell(streamer, self());
             }
+
+            //Rezultatų aktoriui pasakoma, kad transliacija buvo apdorota
             resultsActor.tell(MainActor.PROCESSED_STREAM_MESSAGE, self());
         }).matchAny(message -> {
             log().info(message.toString());

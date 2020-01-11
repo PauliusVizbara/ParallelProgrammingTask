@@ -11,6 +11,10 @@ import java.io.IOException;
 
 import static akka.japi.pf.ReceiveBuilder.match;
 
+/**
+ * Rezultatų aktorius, priemantis ir spausdinantis transliacijas į failą.
+ *
+ */
 public class ResultsActor extends AbstractLoggingActor {
 
     int streamAmount;
@@ -39,10 +43,11 @@ public class ResultsActor extends AbstractLoggingActor {
             log().info("Received a stream");
         }).match(String.class, (message) -> {
             if (message.equals(MainActor.PROCESSED_STREAM_MESSAGE)) {
+                // Jeigu visos transliacijos buvo patikrintos
                 if (++processedStreams == streamAmount) {
                     log().info("End of work");
-                    writer.close();
-                    context().system().terminate();
+                    writer.close(); // Uždaromas failo įrašymas
+                    context().system().terminate(); // Uždaroma aktorių sistema
                 }
             }
         }).matchAny(message -> {

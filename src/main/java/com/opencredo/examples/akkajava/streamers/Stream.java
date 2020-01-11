@@ -2,6 +2,10 @@ package com.opencredo.examples.akkajava.streamers;
 
 import java.util.Date;
 
+/**
+ * Translacijos klasė.
+ *
+ */
 public class Stream {
     public String user_name;
     public int viewer_count;
@@ -20,8 +24,8 @@ public class Stream {
         Date streamDuration = new Date(currentDate.getTime() - stream.started_at.getTime());
 
         double converter = (1 /3.6 ) * 0.000001;
-        double streamHours = streamDuration.getTime() * converter;
-        stream.streamGrowth = stream.viewer_count / streamHours;
+        double streamHours = streamDuration.getTime() * converter; // Suskaičiuojamos transliacijos valandos
+        stream.streamGrowth = stream.viewer_count / streamHours; // Suskaičiuojama žiūrovai per valandą
         stream.streamHours = streamHours;
     }
 }

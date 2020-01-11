@@ -9,6 +9,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public final class API {
+
+
+    /**
+     * Metodas gauti Twitch API atsiųstų translacijų JSON duomenis
+     * @param amount Transliacijų kiekis.
+     * @return JSON String pavidalu
+     */
     public static String getTopStreamsJson(int amount) throws IOException {
         String keyNew = "7b0054jz5xe4q5bphhg4l4a9px5eaw";
 
@@ -31,12 +38,16 @@ public final class API {
         return sb.toString();
     }
 
+    /**
+     * Metodas gauti Twitch API atsiųstas transliacijas Stream masyvo pavidalu
+     * @param amount Transliacijų kiekis.
+     * @return Transliacijų masyvas
+     */
     public static Stream[] getTopStreams(int amount) throws IOException {
 
         Gson gson = new Gson();
         Stream[] streams = new Stream[amount];
         String json = getTopStreamsJson(amount);
-        //streamers = gson.fromJson(json,Streamer[].class);
 
         TopStreams topStreams = gson.fromJson(json,TopStreams.class);
 
