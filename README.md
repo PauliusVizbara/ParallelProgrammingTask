@@ -1,15 +1,28 @@
 # P170B328 Lygiagretusis programavimas. Individuali užduotis sesijos metu
 
- 
+## Duomenys
+
+Duomenys gaunami iš [Twitch API](https://api.twitch.tv/helix/streams)
+
+## Reikalavimai
+
+Programos paleidimas vygdomas su [Maven](http://apache.mirror.vu.lt/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip)
 
 
+## Paleidimas
 
-## Running examples
+Dependencies instaliavimas
+```
+mvn clean install
+```
+
+Paleidimas
+```
+mvn exec:java -P egzaminas
+```
 
 
-
-
-## Example License
+## Example's License
 
 Copyright (c) 2015 Open Credo Ltd, Licensed under MIT License
 
